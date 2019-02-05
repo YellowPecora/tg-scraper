@@ -7,11 +7,11 @@ function scrap(channel:string, message:number) {
 	{
 		uri: 'http://t.me/${channel}/${message}?embed=1',
 		method: 'POST',
-		transform: body => cheerio.load(body);
+		transform: ((body) => cheerio.load(body)),
 	}
 
 	rp(options)
-		.then(($, response) => {
+		.then(($) => {
 			if (response.statusCode == 200) {
 				let user:string = $('div.tgme_widget_message_author')
 				let message:string  = $('div.tgme_widget_message_text')
@@ -21,8 +21,8 @@ function scrap(channel:string, message:number) {
 						msg: message,
 					}
 			};
-
-		)}
+			console.err('error: channel ${channel} not found');
+		});
 		.catch((e:string) => console.err(e););
 	return data;
 
