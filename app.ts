@@ -3,9 +3,10 @@ const rp = require('request-promise');
 
 
 function scrap(channel: string, message: number) {
+	let URI =  `http://t.me/${channel}/${message}?embed=1`	
 	let options =
 	{
-		uri: 'http://t.me/${channel}/${message}?embed=1',
+		uri: URI,
 		method: 'POST',
 		transform: body => cheerio.load(body),
 	}
@@ -23,12 +24,13 @@ function scrap(channel: string, message: number) {
 					}
 					res(data)
 				}
-				console.error("channel not found")
+				else if (response.statusCode == 404 || response.errorCode) {
+					console.error("channel not found")
+				}
 			})
 		.catch((e: string) => req(e));
-	}
+	})
 };
 
-let scrap = await scrap("pythonita", 7)
-console.log(scrap)
+let scrapaCock=  scrap("pythonita", 7).then(data => console.log(data)).catch(e => console.error(e))
 
