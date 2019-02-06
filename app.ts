@@ -8,32 +8,29 @@ function scrap(channel: string, message: number) {
 	{
 		uri: URI,
 		method: 'POST',
-		//	transform: body => cheerio.load(body),
 	}
 
 	return new Promise((res, req) => {
 		rp(options)
-			.then((response) => {
+			.then((response, body) => {
 				if (response.statusCode == 200) {
-					(body) => {
-						let $ = cheerio.load(body)
-						let user:string = $('div.tgme_widget_message_author') // parse the author of the message
-	             		let message:string = $('div.tgme_widget_message_text') // parse the message itself
-						let data =
-						{
-							usr: user,
-							msg: message,
-						}
-						res(data)
+					let $ = cheerio.load(body)
+					console.log(typeof $, typeof response)
+					let user: string = $('div.tgme_widget_message_author') // parse the author of the message
+	           		let message: string = $('div.tgme_widget_message_text') // parse the message itself
+					let data =
+					{
+						usr: user,
+						msg: message,
 					}
-				}
-				else if (response.statusCode == 404 || response.errorCode) {
-					console.error("channel not found")
+					res(data)
+				} else {
+				console.error("channel not found" + response)
 				}
 			})
-		.catch((e: string) => req(e));
+			.catch((e: string) => req(e))
 	})
 };
 
-let scrapaCock =  scrap("pythondadkita", 7).then(data => console.log(data)).catch(e => console.error(e)) // this is just a test btw
+scrap("pythonita", 7).then(data => console.log(data)).catch(e => console.error(e)) // this is just a test btw
 
