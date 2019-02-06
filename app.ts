@@ -7,22 +7,28 @@ function scrap(channel: string, message: number) {
 	{
 		uri: 'http://t.me/${channel}/${message}?embed=1',
 		method: 'POST',
-		transform: body => cheerio.load(body)
+		transform: body => cheerio.load(body),
 	}
 
-	rp(options)
-		.then(($, response) => {
-			if (response.statusCode == 200) {
-				let user: string = $('div.tgme_widget_message_author')
-				let message: string = $('div.tgme_widget_message_text')
-				let data =
-				{
-					usr: user,
-					msg: message,
+	return new Promise((res, req) => {
+		rp(options)
+			.then(($, response) => {
+				if (response.statusCode == 200) {
+					let user:string = $('div.tgme_widget_message_author') // parse the author of the message
+	             	let message:string = $('div.tgme_widget_message_text') // parse the message itself
+					let data =
+					{
+						usr: user,
+						msg: message,
+					}
+					res(data)
 				}
-			}
-		})
-		.catch((e: string) => console.error(e));
-}
+				console.error("channel not found")
+			})
+		.catch((e: string) => req(e));
+	}
+};
 
-scrap("pythonita", 7)
+let scrap = await scrap("pythonita", 7)
+console.log(scrap)
+
