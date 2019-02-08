@@ -1,3 +1,4 @@
+//'use strict';
 const cheerio = require('cheerio');
 const rp = require('request-promise');
 
@@ -14,12 +15,16 @@ function scrap(channel: string, message: number) {
 	return new Promise((res, req) => {
 		rp(options)
 			.then((response) => {
-				let body = response.body	
 				if (response.statusCode == 200) { 
-					let $ = cheerio.load(body)
-					let data = {}
-					let data.usr: string = $('div.tgme_widget_message_author').text() // parse the author of the message
-	           		let data.msg: string = $('div.tgme_widget_message_text').text() // parse the message itself
+					let $ = cheerio.load(response.body)
+					let data = 
+						{
+							usr: $('div.tgme_widget_message_author').text(), // parse the author of the message
+							txt: $('div.tgme_widget_message_text').text(), // parse the message itself
+						}
+					if (data.txt == '' && data.usr == '') {
+						console.log('service message')
+					}
 					res(data)
 				} else {
 					console.error("channel not found" + response.statusCode)
@@ -29,5 +34,4 @@ function scrap(channel: string, message: number) {
 	})
 };
 
-scrap("pythonita", 7).then(data => console.log(`${data.usr}: ${data.msg}`)).catch(e => console.error(e)) // this is just a test btw
-
+scrap('linguaggioc', 215901).then(data => console.log(data)).catch(e => console.error(e));
