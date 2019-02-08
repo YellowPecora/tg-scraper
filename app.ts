@@ -8,29 +8,26 @@ function scrap(channel: string, message: number) {
 	{
 		uri: URI,
 		method: 'POST',
+		resolveWithFullResponse: true,
 	}
 
 	return new Promise((res, req) => {
 		rp(options)
-			.then((response, body) => {
-				if (response.statusCode == 200) {
+			.then((response) => {
+				let body = response.body	
+				if (response.statusCode == 200) { 
 					let $ = cheerio.load(body)
-					console.log(typeof $, typeof response)
-					let user: string = $('div.tgme_widget_message_author') // parse the author of the message
-	           		let message: string = $('div.tgme_widget_message_text') // parse the message itself
-					let data =
-					{
-						usr: user,
-						msg: message,
-					}
+					let data = {}
+					let data.usr: string = $('div.tgme_widget_message_author').text() // parse the author of the message
+	           		let data.msg: string = $('div.tgme_widget_message_text').text() // parse the message itself
 					res(data)
 				} else {
-				console.error("channel not found" + response)
+					console.error("channel not found" + response.statusCode)
 				}
 			})
 			.catch((e: string) => req(e))
 	})
 };
 
-scrap("pythonita", 7).then(data => console.log(data)).catch(e => console.error(e)) // this is just a test btw
+scrap("pythonita", 7).then(data => console.log(`${data.usr}: ${data.msg}`)).catch(e => console.error(e)) // this is just a test btw
 
