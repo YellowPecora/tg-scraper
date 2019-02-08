@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 const cheerio = require('cheerio');
 const rp = require('request-promise');
 
@@ -18,10 +18,10 @@ function scrap(channel: string, message: number) {
 				if (response.statusCode == 200) { 
 					let $ = cheerio.load(response.body)
 					let data = 
-						{
-							usr: $('div.tgme_widget_message_author').text(), // parse the author of the message
-							txt: $('div.tgme_widget_message_text').text(), // parse the message itself
-						}
+					{
+						usr: $('div.tgme_widget_message_author').text(), // parse the author of the message
+				    	txt: $('div.tgme_widget_message_text').text(), // parse the message itself
+					}
 					if (data.txt == '' && data.usr == '') {
 						console.log('service message')
 					}
@@ -34,4 +34,4 @@ function scrap(channel: string, message: number) {
 	})
 };
 
-scrap('computingITA', 34502).then(data => console.log(data)).catch(e => console.error(e));
+scrap('javascript_ita', 36327).then(data => console.log(data['usr'])).catch(e => console.error(e));
