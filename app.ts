@@ -34,4 +34,4 @@ function scrap(channel: string, message: number) {
 	})
 };
 
-scrap('linguaggioc', 215901).then(data => console.log(data)).catch(e => console.error(e));
+scrap('computingITA', 34502).then(data => console.log(data)).catch(e => console.error(e));
