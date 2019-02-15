@@ -2,8 +2,7 @@
 const cheerio = require('cheerio');
 const rp = require('request-promise');
 
-
-function scrap(channel: string, message: number) {
+function (channel: string, message: number) {
 	let URI =  `http://t.me/${channel}/${message}?embed=1`	
 	let options =
 	{
@@ -23,27 +22,35 @@ function scrap(channel: string, message: number) {
 						msg: $('div.tgme_widget_message_text').text(), // parse the message itself
 						date: $('a.tgme_widget_message_date').text(),
 						img: $("div.tgme_widget_message_photo").html(),
-						err: $('div.tgme_widget_message_error').text(),
-					}
-					if (data['err'] != null) {
-						console.error(data['err'])
+						err: $('div.tgme_widget_message_error'),
 					}
 					res(data)
+					return
 				} else {
 				console.error('error ', response.statusCode)
 				}
-			})
+            })
 			.catch((e: string) => req(e))
 	})
 };
 
-scrap('golangitaddajdajhd', 26431).then(data => {
-	if (data['img'] != null) {
-		console.log(`${data['usr']}: [Image] ${data['msg']}	${data['date']}`, data['img'],)
-	} 	else if (data['msg']  == '' && data['usr'] == '' && data['img'] == '') {
-		console.log('service message')
-	} else {
-		console.log(`${data['usr']}: ${data['msg']} ${data['date']}`)
-	}
-})
-.catch(e => console.error(e)); //exaple of usage
+const modules['exports'] = function returnResponses(channel: string, message: number, functor) {
+    if (typeof functor != function) {
+        let functor = console.log;
+    }
+
+    scrap('pythonita', 7).then((data) => {
+        if (data['err'].html() != null) {                                                                                                                                            
+            functor(data['err'].text())                                       
+            return                                                                   
+        } else if (data['img'] != null) {
+		    functor(`${data['usr']}: [Image] ${data['msg']}	${data['date']}`, data['img'],)
+	    } else if (data['msg']  == '' && data['usr'] == '' && data['img'] == '') {
+		    functor('service message')
+	    } else {
+		    functor(`${data['usr']}: ${data['msg']} ${data['date']}`)
+        }
+
+    })
+    .catch(e => console.error(e)); 
+};
