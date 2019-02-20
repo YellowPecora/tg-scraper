@@ -2,7 +2,7 @@
 const cheerio = require('cheerio');
 const rp = require('request-promise');
 
-function (channel: string, message: number) {
+function scrap(channel: string, message: number) {
 	let URI =  `http://t.me/${channel}/${message}?embed=1`	
 	let options =
 	{
@@ -34,23 +34,24 @@ function (channel: string, message: number) {
 	})
 };
 
-const modules['exports'] = function returnResponses(channel: string, message: number, functor) {
-    if (typeof functor != function) {
-        let functor = console.log;
-    }
-
-    scrap('pythonita', 7).then((data) => {
-        if (data['err'].html() != null) {                                                                                                                                            
-            functor(data['err'].text())                                       
-            return                                                                   
-        } else if (data['img'] != null) {
-		    functor(`${data['usr']}: [Image] ${data['msg']}	${data['date']}`, data['img'],)
-	    } else if (data['msg']  == '' && data['usr'] == '' && data['img'] == '') {
-		    functor('service message')
-	    } else {
-		    functor(`${data['usr']}: ${data['msg']} ${data['date']}`)
+module tgScraper {
+    export function returnResponse(channel: string, message: number, functor) {
+        if (typeof functor == undefined) {
+            let functor = console.log;
         }
 
-    })
-    .catch(e => console.error(e)); 
-};
+        scrap(channel, message).then((data) => {
+            if (data['err'].html() != null) {                                                                                                                                            
+                functor(data['err'].text())                                       
+                return                                                                   
+            } else if (data['img'] != null) {
+		        functor(`${data['usr']}: [Image] ${data['msg']}	${data['date']}`, data['img'],)
+	        } else if (data['msg']  == '' && data['usr'] == '' && data['img'] == '') {
+		        functor('service message')
+	        } else {
+		        functor(`${data['usr']}: ${data['msg']} ${data['date']}`)
+            }
+        })
+        .catch(e => console.error(e)); 
+    };
+}
